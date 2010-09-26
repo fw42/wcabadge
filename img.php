@@ -3,6 +3,7 @@ $wca_id = $_GET['id'];
 if(!isset($wca_id) || $wca_id == "" || !preg_match("/^2\d\d\d\w+\d\d$/", $wca_id)) {
 	die("Not a valid WCA ID.");
 }
+$wca_id = strtoupper($wca_id);
 
 mysql_connect("localhost","MyUsername","MyPassword") or die("Database connection failed.");
 mysql_select_db("MyUsername") or die("Database selection failed.");
@@ -68,7 +69,7 @@ $wca_country = $row[1];
 $query = sprintf("SELECT COUNT(DISTINCT(competitionId)) AS comps FROM Results WHERE personId='%s'", mysql_real_escape_string($wca_id));
 $wca_comps = mysql_result(mysql_query($query),0);
 
-$width = 505;
+$width = 505 + strlen($wca_name)*2.5;
 $height = 54;
 
 $logo = imagecreatefrompng("WCA_logo_2.png");
@@ -92,11 +93,25 @@ imagestring($img, 5, $base_x, $base_y, $wca_name, $text_colour);
 imagestring($img, 3, $base_x, $base_y + 16, "$wca_id, $wca_country", $text_colour);
 imagestring($img, 3, $base_x, $base_y + 30, "$wca_comps WCA competition" . ($comps == "1" ? "" : "s"), $text_colour);
 
-$events = array("333", "444", "333bf");
+include "events.php";
+$xevents = array();
+foreach(array($_GET['event_1'], $_GET['event_2'], $_GET['event_3']) as $foo) {
+	if(in_array($foo, $events)) {
+		array_push($xevents,$foo);
+	}
+}
 $offset_y = 0;
-foreach($events as $event) {
+$offset_x = 10*strlen($wca_name);
+if($offset_x < 175) { $offset_x = 175; }
+
+foreach($xevents as $event) {
 	$avg = get_average($wca_id, $event);
 	$single = get_single($wca_id, $event);
+	$country = $wca_country;
+
+	if($_GET['ranking'] == "WR") {
+		$country = false;
+	}
 
 	if($avg == 0 && $single == 0)
 		continue;
@@ -108,17 +123,21 @@ foreach($events as $event) {
 		$text .= format_time($single,$event);
 	}
 
-	imagestring($img, 3, $base_x + 10*strlen($wca_name), $base_y + 4 + $offset_y, $text, $text_colour);
+	imagestring($img, 3, $base_x + $offset_x, $base_y + 4 + $offset_y, $text, $text_colour);
 
-	$text = "NR: ";
-
-	if($avg != 0) {
-		$text .= "#" . get_average_ranking($wca_id,$event,$wca_country,$avg) . " (#" . get_single_ranking($wca_id,$event,$wca_country,$single) . ")";
+	if($country == false) {
+		$text = "WR: ";
 	} else {
-		$text .= "#" . get_single_ranking($wca_id,$event,$wca_country,$single);
+		$text = "NR: ";
 	}
 
-	imagestring($img, 3, $base_x + 10*strlen($wca_name) + 165, $base_y + 4 + $offset_y, $text, $text_colour);
+	if($avg != 0) {
+		$text .= "#" . get_average_ranking($wca_id,$event,$country,$avg) . " (#" . get_single_ranking($wca_id,$event,$country,$single) . ")";
+	} else {
+		$text .= "#" . get_single_ranking($wca_id,$event,$country,$single);
+	}
+
+	imagestring($img, 3, $base_x + $offset_x + 165, $base_y + 4 + $offset_y, $text, $text_colour);
 
 	$offset_y += 12;
 
