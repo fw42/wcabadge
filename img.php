@@ -91,7 +91,7 @@ $base_x = 60;
 $base_y = 5;
 imagestring($img, 5, $base_x, $base_y, $wca_name, $text_colour);
 imagestring($img, 3, $base_x, $base_y + 16, "$wca_id, $wca_country", $text_colour);
-imagestring($img, 3, $base_x, $base_y + 30, "$wca_comps WCA competition" . ($comps == "1" ? "" : "s"), $text_colour);
+imagestring($img, 3, $base_x, $base_y + 30, "$wca_comps WCA competition" . ($wca_comps == "1" ? "" : "s"), $text_colour);
 
 include "events.php";
 $xevents = array();
