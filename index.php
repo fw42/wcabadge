@@ -14,6 +14,7 @@
  body {
   font-family: Tahoma, Verdana, sans-serif;
   font-size: 10pt;
+  background: #f5f5f5;
  }
  img {
   border: 0px;
@@ -45,9 +46,9 @@
  </td>
 </tr>
 <tr>
- <th>Events</th>
+ <th>Events:</th>
  <td>
-  <table border="0">
+  <table border="0" width="100%">
   <tr><th>1</th><th>2</th><th>3</th></tr>
   <tr>
 <? for($i=1; $i<=3; $i++) { ?>
@@ -60,6 +61,13 @@
 <? } ?>
   </tr>
   </table>
+ </td>
+</tr>
+<tr>
+ <th>Options:</th>
+ <td>
+  <input type="checkbox" name="logo" value="0" <? if($_GET['logo'] == "0") { echo 'checked="checked"'; } ?>/> No WCA Logo<br/>
+  <input type="checkbox" name="transparent" value="1" <? if($_GET['transparent'] == "1") { echo 'checked="checked"'; } ?>/> Transparent background, no border<br/>
  </td>
 </tr>
 <tr><td align="center" colspan="2"><input type="submit" value="Generate"/></td></tr>

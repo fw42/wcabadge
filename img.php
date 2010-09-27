@@ -69,25 +69,36 @@ $wca_country = $row[1];
 $query = sprintf("SELECT COUNT(DISTINCT(competitionId)) AS comps FROM Results WHERE personId='%s'", mysql_real_escape_string($wca_id));
 $wca_comps = mysql_result(mysql_query($query),0);
 
-$width = 505 + strlen($wca_name)*2.5;
+$width = 450 + strlen($wca_name)*2.5;
 $height = 54;
+$base_x = 10;
 
-$logo = imagecreatefrompng("WCA_logo_2.png");
+if($_GET['logo'] != "0") {
+	$width += 50;
+	$base_x += 50;
+	$logo = imagecreatefrompng("WCA_logo_2.png");
+}
 
 $img = imagecreatetruecolor($width, $height);
 $border = imagecolorallocate($img, 0, 0, 0);
 $background = imagecolorallocate($img, 255, 255, 255);
 $text_colour = imagecolorallocate($img, 0, 0, 0);
 
-imagefilledrectangle($img, 0, 0, $width, $height, $border);
-imagefilledrectangle($img, 1, 1, $width-2, $height-2, $background);
+if($_GET['transparent'] == "1") {
+	imagecolortransparent($img, $background);
+	imagefilledrectangle($img, 0, 0, $width-1, $height-1, $background);
+} else {
+	imagefilledrectangle($img, 0, 0, $width-1, $height-1, $border);
+	imagefilledrectangle($img, 1, 1, $width-2, $height-2, $background);
+}
 
-imagecopy($img,$logo,2,2,0,0,50,50);
-imagedestroy($logo);
-unset($logo);
+if($_GET['logo'] != "0") {
+	imagecopy($img,$logo,2,2,0,0,50,50);
+	imagedestroy($logo);
+	unset($logo);
+}
 
 // Font size, left, top, text, colour
-$base_x = 60;
 $base_y = 5;
 imagestring($img, 5, $base_x, $base_y, $wca_name, $text_colour);
 imagestring($img, 3, $base_x, $base_y + 16, "$wca_id, $wca_country", $text_colour);
