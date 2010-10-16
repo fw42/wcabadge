@@ -71,18 +71,25 @@ function get_single_ranking($wca, $event, $country, $my) {
 	return mysql_num_rows($result)+1;
 }
 
-// Get name and country
-$query = sprintf("SELECT name, countryId from Persons WHERE id='%s'", mysql_real_escape_string($wca_id));
-$result = mysql_query($query);
-$row = mysql_fetch_row($result);
-$wca_name = $row[0];
-$wca_country = $row[1];
+if($_GET['mini'] != "1") {
+	// Get name and country
+	$query = sprintf("SELECT name, countryId from Persons WHERE id='%s'", mysql_real_escape_string($wca_id));
+	$result = mysql_query($query);
+	$row = mysql_fetch_row($result);
+	$wca_name = $row[0];
+	$wca_country = $row[1];
 
-// Get number of competitions
-$query = sprintf("SELECT COUNT(DISTINCT(competitionId)) AS comps FROM Results WHERE personId='%s'", mysql_real_escape_string($wca_id));
-$wca_comps = mysql_result(mysql_query($query),0);
+	// Get number of competitions
+	$query = sprintf("SELECT COUNT(DISTINCT(competitionId)) AS comps FROM Results WHERE personId='%s'", mysql_real_escape_string($wca_id));
+	$wca_comps = mysql_result(mysql_query($query),0);
+}
 
 $width = 450 + strlen($wca_name)*2.5;
+
+if($_GET['mini'] == "1") {
+	$width = 325;
+}
+
 $height = 54;
 $base_x = 10;
 
@@ -113,9 +120,12 @@ if($_GET['logo'] != "0") {
 
 // Font size, left, top, text, colour
 $base_y = 5;
-imagestring($img, 5, $base_x, $base_y, $wca_name, $text_colour);
-imagestring($img, 3, $base_x, $base_y + 16, "$wca_id, $wca_country", $text_colour);
-imagestring($img, 3, $base_x, $base_y + 30, "$wca_comps WCA competition" . ($wca_comps == "1" ? "" : "s"), $text_colour);
+
+if($_GET['mini'] != "1") {
+	imagestring($img, 5, $base_x, $base_y, $wca_name, $text_colour);
+	imagestring($img, 3, $base_x, $base_y + 16, "$wca_id, $wca_country", $text_colour);
+	imagestring($img, 3, $base_x, $base_y + 30, "$wca_comps WCA competition" . ($wca_comps == "1" ? "" : "s"), $text_colour);
+}
 
 include "events.php";
 $xevents = array();
@@ -125,8 +135,12 @@ foreach(array($_GET['event_1'], $_GET['event_2'], $_GET['event_3']) as $foo) {
 	}
 }
 $offset_y = 0;
-$offset_x = 10*strlen($wca_name);
-if($offset_x < 175) { $offset_x = 175; }
+$offset_x = 0;
+
+if($_GET['mini'] != "1") {
+	$offset_x = 10*strlen($wca_name);
+	if($offset_x < 175) { $offset_x = 175; }
+}
 
 foreach($xevents as $event) {
 	$avg = get_average($wca_id, $event);

@@ -68,6 +68,7 @@
  <td>
   <input type="checkbox" name="logo" value="0" <? if($_GET['logo'] == "0") { echo 'checked="checked"'; } ?>/> No WCA Logo<br/>
   <input type="checkbox" name="transparent" value="1" <? if($_GET['transparent'] == "1") { echo 'checked="checked"'; } ?>/> Transparent background, no border<br/>
+  <input type="checkbox" name="mini" value="1" <? if($_GET['mini'] == "1") { echo 'checked="checked"'; } ?>/> Minimalistic<br/>
  </td>
 </tr>
 <tr><td align="center" colspan="2"><input type="submit" value="Generate"/></td></tr>
