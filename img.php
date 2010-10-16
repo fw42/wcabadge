@@ -10,6 +10,19 @@ mysql_select_db("MyUsername") or die("Database selection failed.");
 
 function format_time($value,$event) {
 	if ($event === "333fm") return $value;
+
+	if ($event === "333mbf") {
+		$difference = 99 - intval(substr($value,-9,2));
+		$missed = intval(substr($value,-1,2));
+		$time = intval(substr($value,-7,5));
+		$solved = $difference + $missed;
+		$tried = $solved + $missed;
+		$minutes = intval(intval($time) / 60);
+		$seconds = intval($time) % 60;
+		if ($minutes>0) $seconds = "0".$seconds;
+		return "$solved/$tried $minutes:".sprintf("%02d",$seconds);
+	}
+
 	$minutes = intval(intval($value) / 6000);
 	$seconds = (intval($value) % 6000) / 100;
 
