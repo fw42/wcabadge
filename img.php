@@ -186,8 +186,8 @@ header("Content-type: image/png");
 imagepng($img);
 
 // Free memory
-imagecolordeallocate($border);
-imagecolordeallocate($background);
-imagecolordeallocate($text_color);
+imagecolordeallocate($img, $border);
+imagecolordeallocate($img, $background);
+imagecolordeallocate($img, $text_color);
 imagedestroy($img);
 ?>
