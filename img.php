@@ -1,14 +1,18 @@
 <?php
+include "events.php";
+
+// Some very basic tests for correct WCA id
 $wca_id = $_GET['id'];
 if(!isset($wca_id) || $wca_id == "" || !preg_match("/^2\d\d\d\w+\d\d$/", $wca_id)) {
 	die("Not a valid WCA ID.");
 }
 $wca_id = strtoupper($wca_id);
 
-mysql_connect("localhost","MyUsername","MyPassword") or die("Database connection failed.");
-mysql_select_db("MyUsername") or die("Database selection failed.");
+// Establish database connection
+include "mysql.php";
 
-function format_time($value,$event) {
+// Format the result according to the event
+function format_time($value, $event) {
 	if ($event === "333fm") return $value;
 
 	if ($event === "333mbf") {
@@ -33,58 +37,66 @@ function format_time($value,$event) {
 	return sprintf("%.2f",$seconds);
 }
 
-function get_average($wca, $event) {
+// Get a persons best average time for an event
+function get_average($mysql, $wca, $event) {
 	$query = sprintf("SELECT MIN(Average) AS average FROM Results WHERE Average > 0 AND personId='%s' AND eventId='%s'",
-		mysql_real_escape_string($wca),
-		mysql_real_escape_string($event)
+		$mysql->real_escape_string($wca),
+		$mysql->real_escape_string($event)
 	);
-	$result = mysql_query($query);
-	return mysql_result($result, 0);;
+	$result = $mysql->query($query);
+	$row = $result->fetch_array();
+	return $row[0];
 }
 
-function get_single($wca, $event) {
+// Get a persons best single time for an event
+function get_single($mysql, $wca, $event) {
 	$query = sprintf("SELECT MIN(Best) AS single FROM Results WHERE Best > 0 AND personId='%s' AND eventId='%s'",
-		mysql_real_escape_string($wca),
-		mysql_real_escape_string($event)
+		$mysql->real_escape_string($wca),
+		$mysql->real_escape_string($event)
 	);
-	$result = mysql_query($query);
-	return mysql_result($result, 0);
+	$result = $mysql->query($query);
+	$row = $result->fetch_array();
+	return $row[0];
 }
 
-function get_average_ranking($wca, $event, $country, $my) {
+// Get a persons position in the ranking of average times (worldwide or for a specific country)
+function get_average_ranking($mysql, $wca, $event, $country, $my) {
 	$query = sprintf("SELECT MIN(Average) as avg FROM Results WHERE Average > 0 AND Average < '%s' AND eventId='%s' %s GROUP BY personId ORDER BY avg",
-		mysql_real_escape_string($my),
-		mysql_real_escape_string($event),
-		$country != false ? ( "AND personCountryId='" . mysql_real_escape_string($country) . "'" ) : ""
+		$mysql->real_escape_string($my),
+		$mysql->real_escape_string($event),
+		$country != false ? ( "AND personCountryId='" . $mysql->real_escape_string($country) . "'" ) : ""
 	);
-	$result = mysql_query($query);
-	return mysql_num_rows($result)+1;
+	$result = $mysql->query($query);
+	return $result->num_rows + 1;
 }
 
-function get_single_ranking($wca, $event, $country, $my) {
+// Get a persons position in the ranking of single times (worldwide or for a specific country)
+function get_single_ranking($mysql, $wca, $event, $country, $my) {
 	$query = sprintf("SELECT MIN(Best) as single FROM Results WHERE Best > 0 AND Best < '%s' AND eventId='%s' %s GROUP BY personId ORDER BY single",
-		mysql_real_escape_string($my),
-		mysql_real_escape_string($event),
-		$country != false ? ( "AND personCountryId='" . mysql_real_escape_string($country) . "'" ) : ""
+		$mysql->real_escape_string($my),
+		$mysql->real_escape_string($event),
+		$country != false ? ( "AND personCountryId='" . $mysql->real_escape_string($country) . "'" ) : ""
 	);
-	$result = mysql_query($query);
-	return mysql_num_rows($result)+1;
+	$result = $mysql->query($query);
+	return $result->num_rows + 1;
 }
 
 if($_GET['mini'] != "1") {
 	// Get name and country
 	$query = sprintf("SELECT name, countryId from Persons WHERE id='%s'", mysql_real_escape_string($wca_id));
-	$result = mysql_query($query);
-	$row = mysql_fetch_row($result);
+	$result = $mysql->query($query);
+	$row = $result->fetch_array();
 	$wca_name = $row[0];
 	$wca_country = $row[1];
 
 	// Get number of competitions
-	$query = sprintf("SELECT COUNT(DISTINCT(competitionId)) AS comps FROM Results WHERE personId='%s'", mysql_real_escape_string($wca_id));
-	$wca_comps = mysql_result(mysql_query($query),0);
+	$query = sprintf("SELECT COUNT(DISTINCT(competitionId)) AS comps FROM Results WHERE personId='%s'",
+		$mysql->real_escape_string($wca_id));
+	$row = $mysql->query($query)->fetch_array();
+	$wca_comps = $row[0];
 }
 
-$width = 450 + strlen($wca_name)*2.5;
+$width = 450 + strlen($wca_name) * 2.5;
 
 if($_GET['mini'] == "1") {
 	$width = 325;
@@ -92,6 +104,7 @@ if($_GET['mini'] == "1") {
 
 $height = 54;
 $base_x = 10;
+$base_y = 5;
 
 if($_GET['logo'] != "0") {
 	$width += 50;
@@ -118,22 +131,21 @@ if($_GET['logo'] != "0") {
 	unset($logo);
 }
 
-// Font size, left, top, text, colour
-$base_y = 5;
-
 if($_GET['mini'] != "1") {
+	// Font size, left, top, text, colour
 	imagestring($img, 5, $base_x, $base_y, $wca_name, $text_colour);
 	imagestring($img, 3, $base_x, $base_y + 16, "$wca_id, $wca_country", $text_colour);
 	imagestring($img, 3, $base_x, $base_y + 30, "$wca_comps WCA competition" . ($wca_comps == "1" ? "" : "s"), $text_colour);
 }
 
-include "events.php";
+// Pick valid events from parameters
 $xevents = array();
 foreach(array($_GET['event_1'], $_GET['event_2'], $_GET['event_3']) as $foo) {
 	if(in_array($foo, $events)) {
 		array_push($xevents,$foo);
 	}
 }
+
 $offset_y = 0;
 $offset_x = 0;
 
@@ -143,14 +155,15 @@ if($_GET['mini'] != "1") {
 }
 
 foreach($xevents as $event) {
-	$avg = get_average($wca_id, $event);
-	$single = get_single($wca_id, $event);
+	$avg = get_average($mysql, $wca_id, $event);
+	$single = get_single($mysql, $wca_id, $event);
 	$country = $wca_country;
 
 	if($_GET['ranking'] == "WR") {
 		$country = false;
 	}
 
+	// Skip this event if there are no times
 	if($avg == 0 && $single == 0)
 		continue;
 
@@ -170,9 +183,10 @@ foreach($xevents as $event) {
 	}
 
 	if($avg != 0) {
-		$text .= "#" . get_average_ranking($wca_id,$event,$country,$avg) . " (#" . get_single_ranking($wca_id,$event,$country,$single) . ")";
+		$text .= "#" . get_average_ranking($mysql, $wca_id, $event, $country, $avg) .
+			" (#" . get_single_ranking($mysql, $wca_id, $event, $country, $single) . ")";
 	} else {
-		$text .= "#" . get_single_ranking($wca_id,$event,$country,$single);
+		$text .= "#" . get_single_ranking($mysql, $wca_id,$event,$country,$single);
 	}
 
 	imagestring($img, 3, $base_x + $offset_x + 165, $base_y + 4 + $offset_y, $text, $text_colour);
