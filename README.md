@@ -18,4 +18,4 @@ You need a local copy of the WCA database in order to run this yourself.
 Example
 -------
 
-![example](http://cube.hackvalue.de/badge2/img.php?id=2007WEIN01&ranking=WR&event_1=333&event_2=444&event_3=333bf "example")
+![example](http://cube.hackvalue.de/badge/img.php?id=2007WEIN01&ranking=WR&event_1=333&event_2=444&event_3=333bf "example")
