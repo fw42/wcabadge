@@ -34,6 +34,8 @@
 
 <p><i>by Florian Weingarten (flo@hackvalue.de)</i></p>
 
+<p><small>Sourcecode on <a href="http://github.com/fw42/wcabadge">github</a></small></p>
+
 <form action="" method="get">
 <table border="0" cellspacing="3" cellpadding="3">
 <tr><th>WCA ID:</th><td><input name="id" value="<?=$_GET['id']?>" /></td></tr>
