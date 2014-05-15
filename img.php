@@ -12,8 +12,8 @@ $wca_id = strtoupper($wca_id);
 include "mysql.php";
 
 // Format the result according to the event
-function format_time($value, $event) {
-	if ($event === "333fm") return $value;
+function format_time($value, $event, $is_avg) {
+	if ($event === "333fm" && $is_avg == false) return $value;
 
 	if ($event === "333mbf") {
 		$difference = 99 - intval(substr($value,-9,2));
@@ -169,9 +169,9 @@ foreach($xevents as $event) {
 
 	$text = "$event: ";
 	if($avg != 0) {
-		$text .= format_time($avg,$event) . " (" . format_time($single,$event) . ")";
+		$text .= format_time($avg,$event,true) . " (" . format_time($single,$event,false) . ")";
 	} else {
-		$text .= format_time($single,$event);
+		$text .= format_time($single,$event,false);
 	}
 
 	imagestring($img, 3, $base_x + $offset_x, $base_y + 4 + $offset_y, $text, $text_colour);
