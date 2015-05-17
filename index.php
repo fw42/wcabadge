@@ -77,8 +77,6 @@
 </table>
 </form>
 
-<p>Database version: <tt><? include "../wca_db/latest.txt" ?></tt></p>
-
 <? if($_GET['id']) { ?>
 <h2>Badge</h2>
 
