@@ -1,0 +1,3 @@
+AddHandler php-fastcgi .php
+Action php-fastcgi /fcgi-bin/php5
+AddType application/x-httpd-php .php

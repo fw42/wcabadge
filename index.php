@@ -1,15 +1,15 @@
 <? include "events.php" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
-<head> 
- <title>WCA Badge</title> 
- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
- <meta name="generator" content="Vi Improved, http://www.vim.org/" /> 
- <meta content="Florian Weingarten" name="author" /> 
- <meta http-equiv="content-language" content="en" /> 
- <meta name="robots" content="index" /> 
- <meta name="revisit-after" content="5 days" /> 
- <meta name="keywords" content="" /> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+ <title>WCA Badge</title>
+ <meta https-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <meta name="generator" content="Vi Improved, https://www.vim.org/" />
+ <meta content="Florian Weingarten" name="author" />
+ <meta https-equiv="content-language" content="en" />
+ <meta name="robots" content="index" />
+ <meta name="revisit-after" content="5 days" />
+ <meta name="keywords" content="" />
  <style type="text/css">
  body {
   font-family: Tahoma, Verdana, sans-serif;
@@ -34,7 +34,7 @@
 
 <p><i>by Florian Weingarten (flo@hackvalue.de)</i></p>
 
-<p><small>Sourcecode on <a href="http://github.com/fw42/wcabadge">github</a></small></p>
+<p><small>Sourcecode on <a href="https://github.com/fw42/wcabadge">github</a></small></p>
 
 <form action="" method="get">
 <table border="0" cellspacing="3" cellpadding="3">
@@ -87,20 +87,20 @@
 <h2>Forum Code</h2>
 
 <pre>
-[url=http://www.worldcubeassociation.org/results/p.php?i=<?= htmlentities($_GET['id']) ?>]
-[img]http://cube.hackvalue.de/badge/img.php?<?= htmlentities($_SERVER['QUERY_STRING']) ?>[/img]
+[url=https://www.worldcubeassociation.org/results/p.php?i=<?= htmlentities($_GET['id']) ?>]
+[img]https://cubecomp.de/badge/img.php?<?= htmlentities($_SERVER['QUERY_STRING']) ?>[/img]
 [/url]
 </pre>
 
 <h2>URL</h2>
 <pre>
-http://cube.hackvalue.de/badge/img.php?<?= htmlentities($_SERVER['QUERY_STRING']) ?>
+https://cubecomp.de/badge/img.php?<?= htmlentities($_SERVER['QUERY_STRING']) ?>
 </pre>
 
 <h2>HTML Code</h2>
 <pre>
-&lt;a href="http://www.worldcubeassociation.org/results/p.php?i=<?= htmlentities($_GET['id']) ?>"&gt;
-&lt;img src="http://cube.hackvalue.de/badge/img.php?<?= htmlentities($_SERVER['QUERY_STRING']) ?>" alt="<?= htmlentities($_GET['id']) ?>"&gt;
+&lt;a href="https://www.worldcubeassociation.org/results/p.php?i=<?= htmlentities($_GET['id']) ?>"&gt;
+&lt;img src="https://cubecomp.de/badge/img.php?<?= htmlentities($_SERVER['QUERY_STRING']) ?>" alt="<?= htmlentities($_GET['id']) ?>"&gt;
 &lt;/a&gt;
 </pre>
 <? } ?>
