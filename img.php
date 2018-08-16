@@ -83,7 +83,7 @@ function get_single_ranking($mysql, $wca, $event, $country, $my) {
 
 if($_GET['mini'] != "1") {
 	// Get name and country
-	$query = sprintf("SELECT name, countryId from Persons WHERE id='%s'", mysql_real_escape_string($wca_id));
+	$query = sprintf("SELECT name, countryId from Persons WHERE id='%s'", $mysql->real_escape_string($wca_id));
 	$result = $mysql->query($query);
 	$row = $result->fetch_array();
 	$wca_name = $row[0];
